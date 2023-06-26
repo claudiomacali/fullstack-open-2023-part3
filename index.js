@@ -1,5 +1,8 @@
+const bodyParser = require('body-parser');
 const express = require('express');
 const app = express();
+
+app.use(bodyParser.json());
 
 const info = () => {
   const date = new Date();
@@ -7,6 +10,10 @@ const info = () => {
     <p>Phonebook has info for ${persons.length} people</p>
     <p>${date}</p>
   </div>`;
+};
+
+const generateId = () => {
+  return Math.floor(Math.random() * 1000000000);
 };
 
 let persons = [
@@ -54,6 +61,25 @@ app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id);
   persons = persons.filter((p) => p.id !== id);
   response.status(204).end();
+});
+
+app.post('/api/persons', (request, response) => {
+  console.log(request?.body);
+  const body = request.body;
+
+  if (!body.name) {
+    return response.status(400).json({
+      error: 'contact name missing',
+    });
+  }
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: generateId(),
+  };
+
+  persons = persons.concat(person);
+  response.json(persons);
 });
 
 const PORT = 3001;
