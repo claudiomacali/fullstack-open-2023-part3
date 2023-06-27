@@ -1,8 +1,11 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const app = express();
+const morgan = require('morgan');
 
 app.use(bodyParser.json());
+
+app.use(morgan('tiny'));
 
 const info = () => {
   const date = new Date();
