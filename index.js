@@ -3,9 +3,19 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 
+/*
+POST /api/persons 200 61 - 4234ms {"name":"nome", "number": "number"}
+*/
+
+morgan.token('body', function (req) {
+  return JSON.stringify(req.body);
+});
+
 app.use(bodyParser.json());
 
-app.use(morgan('tiny'));
+app.use(
+  morgan(':method :url :status :res[content-length] - :response-time ms :body'),
+);
 
 const info = () => {
   const date = new Date();
@@ -67,7 +77,6 @@ app.delete('/api/persons/:id', (request, response) => {
 });
 
 app.post('/api/persons', (request, response) => {
-  console.log(request?.body);
   const body = request.body;
 
   if (!body.name || !body.number) {
